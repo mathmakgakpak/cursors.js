@@ -50,12 +50,13 @@ class cjs {
 		}
 
 		cjs.draw = function(x1, y1, x2, y2) {
+			if (cjs.ws.readyState == 1) {
 			let array = new ArrayBuffer(9);
 			let dv = new DataView(array);
-			if(!x1) x1 = cjs.position.x
-			if(!y1) y1 = cjs.position.y
-			if(!x2) x2 = cjs.position.x
-			if(!y2) y2 = cjs.position.y
+			if(!x1 == undefined) x1 = cjs.position.x
+			if(!y1 == undefined) y1 = cjs.position.y
+			if(!x2 == undefined) x2 = cjs.position.x
+			if(!y2 == undefined) y2 = cjs.position.y
 			dv.setUint8(0, 3);
 			dv.setUint16(1, x1, true);
 			dv.setUint16(3, y1, true);
@@ -64,10 +65,12 @@ class cjs {
 			cjs.ws.send(array);
 			cjs.position.y = y2;
 			cjs.position.x = x2;
+			}
 		}
 		cjs.move = function(x, y) {
-			if(!x) x = cjs.position.x
-			if(!y) x = cjs.position.y
+			if (cjs.ws.readyState == 1) {
+			if(!x == undefined) x = cjs.position.x
+			if(!y == undefined) x = cjs.position.y
 			let array = new ArrayBuffer(9);
 			let dv = new DataView(array);
 			dv.setUint8(0, 1);
@@ -77,10 +80,12 @@ class cjs {
 			cjs.ws.send(array);
 			cjs.position.x = x;
 			cjs.position.y = y;
+			}
 		}
 		cjs.click = function(x, y) {
-			if(!x) x = cjs.position.x
-			if(!y) x = cjs.position.y
+			if (cjs.ws.readyState == 1) {
+			if(!x == undefined) x = cjs.position.x
+			if(!y == undefined) x = cjs.position.y
 			let array = new ArrayBuffer(9);
 			let dv = new DataView(array);
 			dv.setUint8(0, 2);
@@ -90,6 +95,7 @@ class cjs {
 			cjs.ws.send(array);
 			cjs.position.x = x;
 			cjs.position.y = y;
+			}
 		}
 
 	}
