@@ -1,0 +1,28 @@
+{
+  "name": "cursors-js",
+  "version": "1.0.0",
+  "description": "cursors.io client",
+  "main": "index.js",
+  "dependencies": {
+    "colors": "^1.3.3",
+    "fs": "^0.0.1-security",
+    "ws": "^7.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "a"
+  },
+  "keywords": [
+    "cursors",
+    "cursors.io",
+    "cursors-client",
+	"cjs",
+	"cursors-js"
+  ],
+  "author": "mathias377",
+  "license": "ISC"
+}
