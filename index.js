@@ -10,7 +10,7 @@ class cjs extends EventEmitter {
 		let cjs = this
 		cjs.drawing = false
 		
-		this.alphabet = {
+		cjs.alphabet = {
 			32: [],
 			33:[[0,1,1.5,1],[2,1,2.5,1]],//!
 			34:[[0,0.5,1,0.5],[0,1.25,1,1.25]],//"
@@ -203,7 +203,7 @@ class cjs extends EventEmitter {
 			cjs.drawing = true;
 
 			function func() {
-				let letter = this.alphabet[str.toLowerCase().charCodeAt(i)] || this.alphabet[63] || []
+				let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
 				for (let line of letter) {
 					let x1 = x + (line[1] + kerning * i) * fontSize;
 					let y1 = y + line[0] * fontSize;
