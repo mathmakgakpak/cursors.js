@@ -2,7 +2,7 @@
 ### connecting bot
 to connect bot you need use  
 ```js
-const cjs = new cursorsjs.cjs({ws: "ws://serverip", origin: "http://site.name"}) //optionaly you can put agent to change ip
+//const cjs = new cursorsjs.cjs({ws: "ws://serverip", origin: "http://site.name"}) //optionaly you can put agent to change ip
 
 const cjs = new cursorsjs.cjs({ws: "ws://159.65.78.102:2828", origin: "http://cursors.io"}) //connects to cursors.io
 const cjs = new cursorsjs.cjs({ws: "ws://kursors.io/ws/", origin: "http://kursors.io"}) //connects to kursors.io
@@ -29,5 +29,46 @@ this function allows you to draw using bot
 ```js
 cjs.draw(undefined,undefined, cjs.position.x + 10); //draw from your position to your position x + 10 pixels
 ```
+
+### cjs.drawArray(array, x, y, scale, timeout)
+this function allows you to draw images  
+```js
+cjs.draw([[1,2,1,1],[2,2,1,2],[2,1,2,2],[1,1,2,1],[2,2,1,1],[1,2,2,1],[2,4,1,4],[2,5,2,4],[1,5,2,5],[1,4,1,5],[2,5,1,4],[1,5,2,4],[3,5,3,1],[4,5,3,5],[5,4,4,5],[5,3,5,4],[5,2,5,3],[4,1,5,2],[3,1,4,1]]) //draws smile on your position
+//defualt x and y is cjs.position
+//defualt scale is 1
+//defualt timeout is 70ms
+```
+
+### cjs.drawWord(word, x, y, fontSize, kerning, timeout)
+this function allows you to draw words  
+```js
+cjs.drawWord("Hello I'm using cursorsjs by mathias377") //< it will be drawed
+//defualt x and y is cjs.position
+//defualt fontSize is 2
+//defualt kerning (spaces between letters) is 3
+//defualt timeout is 250ms
+```
+### cjs.position
+It's bot position
+```js
+console.log(cjs.position.x, cjs.position.y)// logs position of your bot
+```
+
+### cjs.on() open, closed, connecting, error, closing, level, message, cheat  
+
+```js
+cjs.on("cheat") //this emits when your bot trying to go through wall but anticheat see that
+cjs.on("level") //this emits when your bot going to another level
+cjs.on("message") //this is hard if you dont know how to use it dont use it
+```
+
+### cjs.level
+this is level counter but its not perfect because it adds level more when you will go towrong end
+```js
+cjs.on("level", function() {
+	console.log(cjs.level) //when level changes it logs your bot level
+})
+```
+
 # Credits
 mathias377 did everything
