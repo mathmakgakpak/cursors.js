@@ -6,6 +6,7 @@ const EventEmitter = require('events');
 
 class cjs extends EventEmitter {
 	constructor(options = {}) {
+		super()
 		let cjs = this
 		cjs.drawing = false
 
