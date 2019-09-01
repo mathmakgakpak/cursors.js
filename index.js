@@ -106,7 +106,7 @@ class cjs extends EventEmitter {
 			})
 		}
 		cjs.ws.on("message", function(msg) {
-			cjs.emit("message", msg)
+			cjs.emit("message", msg, cjs)
 			switch (msg.readUInt8(0)) {
 				case 0:
 					break
@@ -116,26 +116,29 @@ class cjs extends EventEmitter {
 					cjs.position.x = msg.readUInt16LE(1)
 					cjs.position.y = msg.readUInt16LE(3)
 					cjs.level++
-					cjs.emit("level")
+					cjs.emit("level", cjs)
 					break
 				case 5:
 					cjs.position.x = msg.readUInt16LE(1)
 					cjs.position.y = msg.readUInt16LE(3)
-					cjs.emit("cheats")
+					cjs.emit("cheats", cjs)
 					break
 			}
 		})
 		cjs.ws.on("open", function() {
-			cjs.emit("open")
+			cjs.emit("open", cjs)
+		})
+		cjs.ws.on("close", function() {
+			cjs.emit("close", cjs)
 		})
 		cjs.ws.on("error", function(err) {
-			cjs.emit("error", err)
+			cjs.emit("error", err, cjs)
 		})
 		cjs.ws.on("connecting", function() {
-			cjs.emit("connecting")
+			cjs.emit("connecting", cjs)
 		})
 		cjs.ws.on("closing", function() {
-			cjs.emit("closing")
+			cjs.emit("closing", cjs)
 		})
 		
 		cjs.level = 0;
