@@ -128,8 +128,8 @@ class cjs extends EventEmitter {
 		cjs.ws.on("open", function() {
 			cjs.emit("open", cjs)
 		})
-		cjs.ws.on("close", function() {
-			cjs.emit("close", cjs)
+		cjs.ws.on("close", function(reason) {
+			cjs.emit("close", reason, cjs)
 		})
 		cjs.ws.on("error", function(err) {
 			cjs.emit("error", err, cjs)
@@ -137,8 +137,8 @@ class cjs extends EventEmitter {
 		cjs.ws.on("connecting", function() {
 			cjs.emit("connecting", cjs)
 		})
-		cjs.ws.on("closing", function() {
-			cjs.emit("closing", cjs)
+		cjs.ws.on("closing", function(reason) {
+			cjs.emit("closing", reason, cjs)
 		})
 		
 		cjs.level = 0;
