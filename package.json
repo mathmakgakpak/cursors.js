@@ -1,6 +1,6 @@
 {
   "name": "cursors-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "cursors.io and clones client",
   "main": "index.js",
   "dependencies": {

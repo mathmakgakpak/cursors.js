@@ -203,12 +203,15 @@ class cjs extends EventEmitter {
 			cjs.drawing = true;
 
 			function func() {
+				var scale = 1
+				if(str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
 				let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
+				
 				for (let line of letter) {
-					let x1 = x + (line[1] + kerning * i) * fontSize;
-					let y1 = y + line[0] * fontSize;
-					let x2 = x + (line[3] + kerning * i) * fontSize;
-					let y2 = y + line[2] * fontSize;
+					let x1 = x + (line[1] * scale + kerning * i) * fontSize;
+					let y1 = y + (line[0] * scale * fontSize);
+					let x2 = x + (line[3] * scale + kerning * i) * fontSize;
+					let y2 = y + (line[2] * scale * fontSize);
 					cjs.draw(x1, y1, x2, y2)
 				}
 				i++
