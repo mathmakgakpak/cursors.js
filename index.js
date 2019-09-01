@@ -219,7 +219,7 @@ class cjs extends EventEmitter {
 					setTimeout(func, timeout)
 				} else {
 					cjs.drawing = false;
-					move(x, y)
+					cjs.move(x, y)
 				}
 			}
 			func()
