@@ -1,4 +1,4 @@
-const cursorsjs = require("cursorsjs");
+const cursorsjs = require("cursors-js");
 
 const cjs = new cursorsjs.cjs({ws: "ws://159.65.78.102:2828", origin: "http://cursors.io"})
 
