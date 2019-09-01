@@ -129,7 +129,7 @@ class cjs extends EventEmitter {
 			cjs.emit("open")
 		})
 		cjs.ws.on("error", function(err) {
-			cjs.emit("error", error)
+			cjs.emit("error", err)
 		})
 		cjs.ws.on("connecting", function() {
 			cjs.emit("connecting")
