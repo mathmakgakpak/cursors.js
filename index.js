@@ -3,13 +3,12 @@ const fs = require('fs');
 const colors = require("colors")
 const EventEmitter = require('events');
 
-
 class cjs extends EventEmitter {
 	constructor(options = {}) {
 		super()
 		let cjs = this
 		cjs.drawing = false
-		
+
 		cjs.alphabet = {
 			32: [],
 			33:[[0,1,1.5,1],[2,1,2.5,1]],//!
@@ -84,7 +83,7 @@ class cjs extends EventEmitter {
 			125:[[0,0.5,0,1.5],[0,1.5,0.5,1.5],[0.5,1.5,1,2],[1,2,1.5,1.5],[1.5,1.5,2,1.5],[2,1.5,2,0.5]],// }
 			126:[[0.5,0,0,0.75],[0,0.75,0.5,1.5],[0.5,1.5,0,2.25]],// ~
 		};
-
+		
 		cjs.ws = new WebSocketClient(options.ws || "ws://159.65.78.102:2828", {
 			headers: {
 				'Origin': options.origin || "http://cursors.io"
@@ -105,20 +104,40 @@ class cjs extends EventEmitter {
 
 			})
 		}
+		cjs.usersOnLevel = 0;
+		cjs.players = [];
+		cjs.usersOnline = 0;
+		cjs.id = 0;
 		cjs.ws.on("message", function(msg) {
 			cjs.emit("message", msg, cjs)
 			switch (msg.readUInt8(0)) {
-				case 0:
+				case 0: //get id
+				cjs.id = msg.readUInt32LE(1, true)
 					break
-				case 1:
+				case 1: //player moves draws and changes of map
+					var newPlayers = [];
+					var asd = 0;
+					for (var i = 0; i < msg.readUInt16LE(1, true); ++i) {
+						newPlayers.push({
+							id: msg.readUInt32LE(3 + i * 8, true),
+							x: msg.readUInt16LE(7 + i * 8, true),
+							y: msg.readUInt16LE(9 + i * 8, true)
+						})
+						asd = msg.readUInt32LE(19 + i * 8, true)
+					}
+					//console.log(asd)
+					cjs.players = newPlayers;
+					cjs.usersOnLevel = newPlayers.length;
+					//cjs.usersOnline = msg.readUInt32LE(21 + msg.readUInt16LE(1, true) * 8, true);
 					break
-				case 4:
+				case 4: //level chamge
+					cjs.players = []
 					cjs.position.x = msg.readUInt16LE(1)
 					cjs.position.y = msg.readUInt16LE(3)
 					cjs.level++
 					cjs.emit("level", cjs)
 					break
-				case 5:
+				case 5: //trying to go through walls our an weird move
 					cjs.position.x = msg.readUInt16LE(1)
 					cjs.position.y = msg.readUInt16LE(3)
 					cjs.emit("cheats", cjs)
@@ -140,7 +159,7 @@ class cjs extends EventEmitter {
 		cjs.ws.on("closing", function(reason) {
 			cjs.emit("closing", reason, cjs)
 		})
-		
+
 		cjs.level = 0;
 		cjs.position = {
 			x: 0,
@@ -207,9 +226,9 @@ class cjs extends EventEmitter {
 
 			function func() {
 				var scale = 1
-				if(str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
+				if (str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
 				let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
-				
+
 				for (let line of letter) {
 					let x1 = x + (line[1] * scale + kerning * i) * fontSize;
 					let y1 = y + (line[0] * scale * fontSize);

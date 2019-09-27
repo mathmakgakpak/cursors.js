@@ -4,7 +4,7 @@ const cjs = new cursorsjs.cjs({ws: "ws://159.65.78.102:2828", origin: "http://cu
 
 
 cjs.on("open", function(){
-	console.log("Connected")
+	console.log("Connected. Your id is " + cjs.id);
 	cjs.enableConsoleControl()
 	cjs.move(300, 175) // first level 
 })

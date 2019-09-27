@@ -55,20 +55,26 @@ It's bot position
 console.log(cjs.position.x, cjs.position.y)// logs position of your bot
 ```
 
-### cjs.on() open, closed, connecting, error, closing, level, message, cheat  
+### Events cjs.on() open, closed, connecting, error, closing, level, message, cheat  
 ```js
 cjs.on("cheat") //this emits when your bot trying to go through wall but anticheat see that
 cjs.on("level") //this emits when your bot going to another level
-cjs.on("message") //this is hard if you dont know how to use it dont use it
+cjs.on("message") //this is hard if you don't know how to use it don't use it
 ```
 
 ### cjs.level
-this is level counter but its not perfect because it adds level more when you will go towrong end  
+This is level counter but its not perfect because it adds level more when you will go to wrong exit.  
 ```js
 cjs.on("level", function() {
 	console.log(cjs.level) //when level changes it logs your bot level
 })
 ```
+
+### cjs.players
+This gives you players array.  
+
+### cjs.id
+It's your bot id.  
 
 # Credits
 mathias377 (mathmakgakpak) did everything
