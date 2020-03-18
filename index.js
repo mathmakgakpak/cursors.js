@@ -993,58 +993,57 @@ class cjs extends EventEmitter {
         resolve()
       })
     }
-  }
 
-  cjs.click = function(x = cjs.position.x, y = cjs.position.y) {
-    if (cjs.ws.readyState == 1) {
-      let array = new ArrayBuffer(9);
-      let dv = new DataView(array);
-      dv.setUint8(0, 2);
-      dv.setUint16(1, x, true);
-      dv.setUint16(3, y, true);
-      dv.setUint32(5, -1, true);
-      cjs.ws.send(array);
-      cjs.position.x = x;
-      cjs.position.y = y;
-    }
-  }
-  cjs.drawArray = async function(array, x = cjs.position.x, y = cjs.position.y, scale = 1, timeout = 70) {
-    for (var i = 0; i < array.length; i++) {
-      cjs.draw(x + array[i][1] * scale, y + array[i][0] * scale, x + array[i][3] * scale, y + array[i][2] * scale)
-      await sleep(timeout)
-    }
-  }
-  cjs.drawWord = function(str, x = cjs.position.x, y = cjs.position.y, fontSize = 2, kerning = 3, timeout = 250) {
-    str = str.trim()
-    if (str == undefined || str.length <= 0 || cjs.drawing == true) return;
-
-    let i = 0;
-    cjs.drawing = true;
-
-    function func() {
-      var scale = 1
-      if (str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
-      let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
-
-      for (let line of letter) {
-        let x1 = x + (line[1] * scale + kerning * i) * fontSize;
-        let y1 = y + (line[0] * scale * fontSize);
-        let x2 = x + (line[3] * scale + kerning * i) * fontSize;
-        let y2 = y + (line[2] * scale * fontSize);
-        cjs.draw(x1, y1, x2, y2)
-      }
-      i++
-      if (str.charCodeAt(i)) {
-        setTimeout(func, timeout)
-      } else {
-        cjs.drawing = false;
-        cjs.move(x, y)
+    cjs.click = function(x = cjs.position.x, y = cjs.position.y) {
+      if (cjs.ws.readyState == 1) {
+        let array = new ArrayBuffer(9);
+        let dv = new DataView(array);
+        dv.setUint8(0, 2);
+        dv.setUint16(1, x, true);
+        dv.setUint16(3, y, true);
+        dv.setUint32(5, -1, true);
+        cjs.ws.send(array);
+        cjs.position.x = x;
+        cjs.position.y = y;
       }
     }
-    func()
-  }
+    cjs.drawArray = async function(array, x = cjs.position.x, y = cjs.position.y, scale = 1, timeout = 70) {
+      for (var i = 0; i < array.length; i++) {
+        cjs.draw(x + array[i][1] * scale, y + array[i][0] * scale, x + array[i][3] * scale, y + array[i][2] * scale)
+        await sleep(timeout)
+      }
+    }
+    cjs.drawWord = function(str, x = cjs.position.x, y = cjs.position.y, fontSize = 2, kerning = 3, timeout = 250) {
+      str = str.trim()
+      if (str == undefined || str.length <= 0 || cjs.drawing == true) return;
 
-}
+      let i = 0;
+      cjs.drawing = true;
+
+      function func() {
+        var scale = 1
+        if (str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
+        let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
+
+        for (let line of letter) {
+          let x1 = x + (line[1] * scale + kerning * i) * fontSize;
+          let y1 = y + (line[0] * scale * fontSize);
+          let x2 = x + (line[3] * scale + kerning * i) * fontSize;
+          let y2 = y + (line[2] * scale * fontSize);
+          cjs.draw(x1, y1, x2, y2)
+        }
+        i++
+        if (str.charCodeAt(i)) {
+          setTimeout(func, timeout)
+        } else {
+          cjs.drawing = false;
+          cjs.move(x, y)
+        }
+      }
+      func()
+    }
+
+  }
 
 }
 
