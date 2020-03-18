@@ -1051,5 +1051,6 @@ class cjs extends EventEmitter {
 }
 
 module.exports = {
-  cjs
+  cjs,
+  path: zm.path
 }
