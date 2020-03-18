@@ -4,7 +4,11 @@ to connect bot you need use
 ```js
 //const cjs = new cursorsjs.cjs({ws: "ws://serverip", origin: "http://site.name"}) //optionaly you can put agent to change ip
 
-const cjs = new cursorsjs.cjs({ws: "ws://159.65.78.102:2828", origin: "http://cursors.io"}) //connects to cursors.io
+const cjs = new cursorsjs.cjs() //connects to cursors.io
+const cjs = new cursorsjs.cjs({memorySaver: true}) //enables memory saver good for making bots
+//memorySaver disables playerMoved, newPlayer, playerLeft, click, newDrawing and variables like cjs.levelDrawings, cjs.players, cjs.levelClicks
+
+
 const cjs = new cursorsjs.cjs({ws: "ws://kursors.io/ws/", origin: "http://kursors.io"}) //connects to kursors.io
 ```
 
@@ -20,8 +24,8 @@ cjs.move(300,175); // moves to x:300, y:175
 this function allows you to click using bot  
 ```js
 cjs.click(cjs.position.x + 10); //moves 10 pixels to right and clicks 1 time
-cjs.click(); //clicks 1 time on your position
-cjs.click(300,175); // clicks on x:300, y:175
+cjs.click(); //clicks 1 time at your position
+cjs.click(300,175); // clicks at x:300, y:175
 ```
 
 ### cjs.draw(x1, y1,x2, y2)
@@ -34,9 +38,9 @@ cjs.draw(undefined,undefined, cjs.position.x + 10); //draw from your position to
 this function allows you to draw images  
 ```js
 cjs.draw([[1,2,1,1],[2,2,1,2],[2,1,2,2],[1,1,2,1],[2,2,1,1],[1,2,2,1],[2,4,1,4],[2,5,2,4],[1,5,2,5],[1,4,1,5],[2,5,1,4],[1,5,2,4],[3,5,3,1],[4,5,3,5],[5,4,4,5],[5,3,5,4],[5,2,5,3],[4,1,5,2],[3,1,4,1]]) //draws smile on your position
-//defualt x and y is cjs.position
-//defualt scale is 1
-//defualt timeout is 70ms
+//default x and y is cjs.position
+//default scale is 1
+//default timeout is 70ms
 ```
 
 ### cjs.drawWord(word, x, y, fontSize, kerning, timeout)
@@ -44,10 +48,10 @@ this function allows you to draw words
 some of leters are weird well sorry  
 ```js
 cjs.drawWord("Hello I'm using cursorsjs by mathias377") //< it will be drawed
-//defualt x and y is cjs.position
-//defualt fontSize is 2
-//defualt kerning (spaces between letters) is 3
-//defualt timeout is 250ms
+//default x and y is cjs.position
+//default fontSize is 2
+//default kerning (spaces between letters) is 3
+//default timeout is 250ms
 ```
 ### cjs.position
 It's bot position  
@@ -55,11 +59,17 @@ It's bot position
 console.log(cjs.position.x, cjs.position.y)// logs position of your bot
 ```
 
-### Events cjs.on() open, closed, connecting, error, closing, level, message, cheat  
+### cjs.on() Events open, close, level, message, cheat, playerMoved, newPlayer, playerLeft, click, newDrawing   
+if you will use memorySaver this events will wont work  
+playerMoved, newPlayer, playerLeft, click, newDrawing  
+
 ```js
 cjs.on("cheat") //this emits when your bot trying to go through wall but anticheat see that
 cjs.on("level") //this emits when your bot going to another level
 cjs.on("message") //this is hard if you don't know how to use it don't use it
+cjs.on("playerMoved", function(player) {
+	console.log(player) // logs player which moved
+})
 ```
 
 ### cjs.level
@@ -71,10 +81,20 @@ cjs.on("level", function() {
 ```
 
 ### cjs.players
-This gives you players array.  
+returns level players array, but if you will use memorySaver it will return undefined  
+
+### cjs.levelObjects
+returns level Objects array, but if you will use memorySaver it will return undefined
+
+### cjs.levelClicks
+returns level Clicks array, but if you will use memorySaver it will return undefined
+
+### cjs.levelDrawings
+returns level drawings array, but if you will use memorySaver it will return undefined
 
 ### cjs.id
 It's your bot id.  
 
 # Credits
-mathias377 (mathmakgakpak) did everything
+mathias377 (mathmakgakpak) did module
+vnx did some things without which the bot wouldn't work
