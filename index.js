@@ -833,9 +833,8 @@ class cjs extends EventEmitter {
 
           out = zM.parse.objects(msg, offset);
 
-          var objToAdd = out.shift();
+          var objToAdd = zM.parse.objData(out.shift());
           offset = out.shift();
-
           for (var i = 0; i < objToAdd.length; i++) {
             var index = cjs.levelObjects.findIndex(obj => obj.id === objToAdd[i].id);
             if (index === -1) {
@@ -1049,5 +1048,5 @@ class cjs extends EventEmitter {
 
 module.exports = {
   cjs,
-  path: zm.path
+  zM
 }
