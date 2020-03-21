@@ -59,7 +59,7 @@ It's bot position
 console.log(cjs.position.x, cjs.position.y)// logs position of your bot
 ```
 
-### cjs.on() Events open, close, level, message, cheat, playerMoved, newPlayer, playerLeft, click, newDrawing   
+### cjs.on() Events open, close, level, message, cheat, playerMoved, newPlayer, playerLeft, click, newDrawing, objectAdded, objectRemoved, objectUpdated  
 if you will use memorySaver this events will wont work  
 playerMoved, newPlayer, playerLeft, click, newDrawing  
 
@@ -75,8 +75,8 @@ cjs.on("playerMoved", function(player) {
 ### cjs.level
 This is level counter but its not perfect because it adds level more when you will go to wrong exit.  
 ```js
-cjs.on("level", function() {
-	console.log(cjs.level) //when level changes it logs your bot level
+cjs.on("level", function(level) {
+	console.log(level) //when level changes it logs your bot level
 })
 ```
 

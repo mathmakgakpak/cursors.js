@@ -720,11 +720,11 @@ class cjs extends EventEmitter {
       ], // ~
     };
 
-    cjs.ws = new WebSocketClient(options.ws || "ws://157.245.226.69:2828", {
+    cjs.ws = new WebSocketClient(options.ws ? options.ws: "ws://157.245.226.69:2828", {
       headers: {
-        'Origin': options.origin || "http://cursors.io"
+        'Origin': options.origin ? options.origin : "http://cursors.io"
       },
-      agent: options.agent || undefined
+      agent: options.agent ? options.agent : undefined
     })
 
     cjs.enableConsoleControl = function() {
@@ -756,6 +756,7 @@ class cjs extends EventEmitter {
       switch (msg.readUInt8(0)) {
         case 0: //get id
           cjs.id = msg.readUInt32LE(1, true)
+          cjs.emit("gotId", cjs.id)
           break
         case 1: //player moves draws and changes of map
           //players
@@ -827,7 +828,9 @@ class cjs extends EventEmitter {
           offset = out.shift();
 
           for (var i = 0; i < objToRemove.length; i++) {
-            cjs.levelObjects.splice(cjs.levelObjects.findIndex(obj => obj.id === objToRemove[i]), 1)
+            var index = cjs.levelObjects.findIndex(obj => obj.id === objToRemove[i])
+            cjs.emit("objectRemoved", cjs.levelObjects[index])
+            cjs.levelObjects.splice(index, 1)
           }
 
 
@@ -839,8 +842,10 @@ class cjs extends EventEmitter {
             var index = cjs.levelObjects.findIndex(obj => obj.id === objToAdd[i].id);
             if (index === -1) {
               cjs.levelObjects.push(objToAdd[i])
+              cjs.emit("objectAdded", objToAdd[i])
             } else {
               cjs.levelObjects[index] = objToAdd[i]
+              cjs.emit("objectUpdated", objToAdd[i])
             }
           }
 
@@ -929,7 +934,7 @@ class cjs extends EventEmitter {
           if (i != -1) cjs.level = i;
           else ++cjs.level, cjs.prevLevels.push(compare);
 
-          cjs.emit("level")
+          cjs.emit("level", cjs.level)
           break
         case 5: //trying to go through walls or an weird move
           cjs.position.x = msg.readUInt16LE(1)
@@ -946,6 +951,7 @@ class cjs extends EventEmitter {
     })
 
     cjs.level = 0;
+
     cjs.position = {
       x: 0,
       y: 0
@@ -994,7 +1000,7 @@ class cjs extends EventEmitter {
     }
 
     cjs.click = function(x = cjs.position.x, y = cjs.position.y) {
-      if (cjs.ws.readyState == 1) {
+      if (cjs.ws.readyState === 1) {
         let array = new ArrayBuffer(9);
         let dv = new DataView(array);
         dv.setUint8(0, 2);
@@ -1014,36 +1020,29 @@ class cjs extends EventEmitter {
     }
     cjs.drawWord = function(str, x = cjs.position.x, y = cjs.position.y, fontSize = 2, kerning = 3, timeout = 250) {
       str = str.trim()
-      if (str == undefined || str.length <= 0 || cjs.drawing == true) return;
+      if (str == undefined || str.length === 0 || cjs.drawing == true) return false;
+      return new Promise(async function(resolve) {
+        await cjs.move(x, y);
 
-      let i = 0;
-      cjs.drawing = true;
-
-      function func() {
-        var scale = 1
-        if (str.charAt(i) == str.charAt(i).toLowerCase()) scale /= 1.3;
-        let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
-
-        for (let line of letter) {
-          let x1 = x + (line[1] * scale + kerning * i) * fontSize;
-          let y1 = y + (line[0] * scale * fontSize);
-          let x2 = x + (line[3] * scale + kerning * i) * fontSize;
-          let y2 = y + (line[2] * scale * fontSize);
-          cjs.draw(x1, y1, x2, y2)
+        for (var i = 0; i < str.length; i++) {
+          var scale = 1
+          if (str[i] == str[i].toLowerCase()) scale = 0.75;
+          let letter = cjs.alphabet[str.toLowerCase().charCodeAt(i)] || cjs.alphabet[63] || []
+          for (let line of letter) {
+            let x1 = x + (line[1] * scale + kerning * i) * fontSize;
+            let y1 = y + (line[0] * scale * fontSize);
+            let x2 = x + (line[3] * scale + kerning * i) * fontSize;
+            let y2 = y + (line[2] * scale * fontSize);
+            cjs.draw(x1, y1, x2, y2)
+            await sleep(Math.floor(timeout / letter.length))
+          }
         }
-        i++
-        if (str.charCodeAt(i)) {
-          setTimeout(func, timeout)
-        } else {
-          cjs.drawing = false;
-          cjs.move(x, y)
-        }
-      }
-      func()
+        cjs.drawing = false;
+        await cjs.move(x, y)
+        resolve(true)
+      })
     }
-
   }
-
 }
 
 module.exports = {
