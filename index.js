@@ -727,7 +727,7 @@ class Client extends EventEmitter {
     this._options = options;
 
     if (!options.ws) options.ws = "ws://157.245.226.69:2828";
-    if (!options.origin) options.origin = options.ws.replace(/http/, "ws");
+    if (!options.origin) options.origin = "http://cursors.io"; //options.ws.replace(/http/, "ws");
     if (typeof options.reconnectTimeout !== "number") options.reconnectTimeout = 5000;
 
 
