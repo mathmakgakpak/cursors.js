@@ -962,7 +962,7 @@ class Client extends EventEmitter {
       });
       ws.on("close", function(reason) {
         that.emit("close", reason);
-        if(options.reconect) setTimeout(makeSocket, options.reconectTimeout);
+        if(options.reconnect) setTimeout(makeSocket, options.reconnectTimeout);
       });
       that.ws = ws;
     }()
