@@ -1,19 +1,34 @@
 # cjs documentation
-### connecting bot
+## connecting bot
 to connect bot you need use  
 ```js
 //const cjs = new cursorsjs.cjs({ws: "ws://serverip", origin: "http://site.name"}) //optionaly you can put agent to change ip
+const cursorsjs = require("cursors-js");
 
-const cjs = new cursorsjs.cjs() //connects to cursors.io
-const cjs = new cursorsjs.cjs({memorySaver: true}) //enables memory saver good for making bots
+//^ returns object with alphabet Client zm(parser)
+
+const cjs = new cursorsjs.Client(); //connects to cursors.io
+const cjs = new cursorsjs.Client({memorySaver: true}); //enables memory saver good for making bots
 //memorySaver disables playerMoved, newPlayer, playerLeft, click, newDrawing and variables like cjs.levelDrawings, cjs.players, cjs.levelClicks
 
 
-const cjs = new cursorsjs.cjs({ws: "ws://kursors.io/ws/", origin: "http://kursors.io"}) //connects to kursors.io
+const cjs = new cursorsjs.Client({ws: "ws://kursors.io/ws/", origin: "http://kursors.io"}); //connects to kursors.io
 ```
 
-### cjs.move(x, y)
-this function allows you to move your bot  
+## options
+name (type) - description
+
+memorySaver (boolean) - enables memory saver I think that it can be helpful
+ws (string) - WebSocket which bot connects to
+origin (string) - url
+reconnect (boolean) - should bot reconect after disconnected
+reconnectTimeout (number) - timeout after bot should reconnect
+
+I think that I forgot about something `¯\_(ツ)_/¯`
+
+
+### async (that means you can wait for bot move) cjs.move(x, y)
+this function allows you to move your bot using pathfinder  
 ```js
 cjs.move(cjs.position.x + 10); //moves 10 pixels to right
 cjs.move(undefined, cjs.position.y + 10); //moves 10 pixels to down
@@ -34,20 +49,20 @@ this function allows you to draw using bot
 cjs.draw(undefined,undefined, cjs.position.x + 10); //draw from your position to your position x + 10 pixels
 ```
 
-### cjs.drawArray(array, x, y, scale, timeout)
+### async cjs.drawArray(array, x, y, scale, timeout) async
 this function allows you to draw images  
 ```js
-cjs.draw([[1,2,1,1],[2,2,1,2],[2,1,2,2],[1,1,2,1],[2,2,1,1],[1,2,2,1],[2,4,1,4],[2,5,2,4],[1,5,2,5],[1,4,1,5],[2,5,1,4],[1,5,2,4],[3,5,3,1],[4,5,3,5],[5,4,4,5],[5,3,5,4],[5,2,5,3],[4,1,5,2],[3,1,4,1]]) //draws smile on your position
+cjs.drawArray([[1,2,1,1],[2,2,1,2],[2,1,2,2],[1,1,2,1],[2,2,1,1],[1,2,2,1],[2,4,1,4],[2,5,2,4],[1,5,2,5],[1,4,1,5],[2,5,1,4],[1,5,2,4],[3,5,3,1],[4,5,3,5],[5,4,4,5],[5,3,5,4],[5,2,5,3],[4,1,5,2],[3,1,4,1]]) //draws smile on your position
 //default x and y is cjs.position
 //default scale is 1
 //default timeout is 70ms
 ```
 
-### cjs.drawWord(word, x, y, fontSize, kerning, timeout)
+### async cjs.drawWord(word, x, y, fontSize, kerning, timeout)
 this function allows you to draw words  
 some of leters are weird well sorry  
 ```js
-cjs.drawWord("Hello I'm using cursorsjs by mathias377") //< it will be drawed
+cjs.drawWord("Hello I'm using cursorsjs by mathias377") //< it will be written
 //default x and y is cjs.position
 //default fontSize is 2
 //default kerning (spaces between letters) is 3
@@ -69,7 +84,7 @@ cjs.on("level") //this emits when your bot going to another level
 cjs.on("message") //this is hard if you don't know how to use it don't use it
 cjs.on("playerMoved", function(player) {
 	console.log(player) // logs player which moved
-})
+});
 ```
 
 ### cjs.level
