@@ -737,7 +737,7 @@ class Client extends EventEmitter {
         let msg = d.toString().trim();
 
         try {
-          return String(eval(msg));
+          return console.log(String(eval(msg)));
         } catch (e) {
           console.log('[ERROR]:' + e.name + ":" + e.message + "\n" + e.stack);
         }
