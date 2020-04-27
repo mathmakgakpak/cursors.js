@@ -729,6 +729,7 @@ class Client extends EventEmitter {
     if (!options.ws) options.ws = "ws://157.245.226.69:2828";
     if (!options.origin) options.origin = "http://cursors.io"; //options.ws.replace(/http/, "ws");
     if (typeof options.reconnectTimeout !== "number") options.reconnectTimeout = 5000;
+    if(typeof options.autoMakeSocket === "undefined") options.autoMakeSocket = true;
 
 
     if (options.controller) {
@@ -748,12 +749,16 @@ class Client extends EventEmitter {
     this.levelDrawings = [];
 
     this.usersOnline = 0;
-    this.id = 0;
+    this.id = -1;
     this.grid = 5;
     this.level = -1;
     this.levelObjects = [];
     this.prevLevels = [];
     this.drawing = false;
+    this.position = {
+      x: 0,
+      y: 0
+    }
 
     let messageHandler = msg => {
       this.emit("message", msg);
@@ -949,7 +954,22 @@ class Client extends EventEmitter {
           break
       }
     }
-    void function makeSocket() {
+
+    this.makeSocket = function() {
+      this.drawing = false;
+      this.position = {
+        x: 0,
+        y: 0
+      }
+      this.id = -1;
+      this.grid = 5;
+      this.level = -1;
+      this.levelObjects = [];
+      this.usersOnline = 0;
+      this.players = {};
+      this.levelClicks = [];
+      this.levelDrawings = [];
+
       let ws = new WebSocketClient(options.ws, {
         headers: {
           'Origin': options.origin
@@ -962,27 +982,14 @@ class Client extends EventEmitter {
       });
       ws.on("close", function(reason) {
         that.emit("close", reason);
-        if(options.reconnect) setTimeout(makeSocket, options.reconnectTimeout);
+        if(options.reconnect) setTimeout(that.makeSocket, options.reconnectTimeout);
       });
       that.ws = ws;
-    }()
-
-
-    this.position = {
-      x: 0,
-      y: 0
     }
-  }
-  async move(x = this.position.x, y = this.position.y, pathFinder = true, pathFinderTimeout = 5) {
-    if (pathFinder) {
-      let moves = zM.path(this.position.x, this.position.y, x, y, this.levelObjects, this.grid);
-
-      for (let i = 0; i < moves.length; i++) {
-        this._move(moves[i][0], moves[i][1]);
-        await sleep(pathFinderTimeout)
-      }
+    if(options.autoMakeSocket) {
+        this.makeSocket();
     } else {
-      this._move(x, y);
+      console.warn("Disabled option autoMakeSocket! If you want start bot, do it in your script!");
     }
   }
   _move(x, y) {
@@ -996,7 +1003,9 @@ class Client extends EventEmitter {
       this.ws.send(array);
       this.position.x = x;
       this.position.y = y;
+      return true;
     }
+    return false;
   }
   click(x = this.position.x, y = this.position.y) {
     if (this.ws.readyState === 1) {
@@ -1009,13 +1018,9 @@ class Client extends EventEmitter {
       this.ws.send(array);
       this.position.x = x;
       this.position.y = y;
+      return true;
     }
-  }
-  async drawArray(array, x = this.position.x, y = this.position.y, scale = 1, timeout = 70) {
-    for (let i = 0; i < array.length; i++) {
-      this.draw(x + array[i][1] * scale, y + array[i][0] * scale, x + array[i][3] * scale, y + array[i][2] * scale)
-      await sleep(timeout)
-    }
+    return false;
   }
   draw(x1 = this.position.x, y1 = this.position.y, x2 = this.position.x, y2 = this.position.y) {
     if (this.ws.readyState === 1) {
@@ -1029,28 +1034,61 @@ class Client extends EventEmitter {
       this.ws.send(array);
       this.position.y = y2;
       this.position.x = x2;
+      return true;
     }
+    return false;
   }
-  async drawWord(str, x = this.position.x, y = this.position.y, fontSize = 2, kerning = 3, timeout = 250) {
-    str = str.trim()
+  async move(x = this.position.x, y = this.position.y, pathFinder = true, pathFinderTimeout = 5) {
+    if (pathFinder) {
+      let moves = zM.path(this.position.x, this.position.y, x, y, this.levelObjects, this.grid);
+
+      for (let i = 0; i < moves.length; i++) {
+        if(!this._move(moves[i][0], moves[i][1])) return false;
+        await sleep(pathFinderTimeout)
+      }
+    } else {
+      if(!this._move(x, y)) return false;
+    }
+    return true;
+  }
+
+  async drawArray(array, x = this.position.x, y = this.position.y, scale = 1, timeout = 70, sneaky = true) {
+    if (this.ws.readyState !== 1) return false;
+    this.drawing = true;
+    for (let i = 0; i < array.length; i++) {
+      if(!this.draw(x + array[i][1] * scale, y + array[i][0] * scale, x + array[i][3] * scale, y + array[i][2] * scale)) return false;
+      await sleep(timeout)
+    }
+    this.drawing = false;
+
+    if(sneaky) if(!await this.move(x, y)) return false;
+
+    return true;
+  }
+  async drawWord(str, x = this.position.x, y = this.position.y, fontSize = 2, kerning = 3, timeout = 250, sneaky = true) {
+    if (this.ws.readyState !== 1) return false;
+    str = str.trim();
     if (typeof str !== "string"  || this.drawing === true) return false;
-    await this.move(x, y);
+    if(!await this.move(x, y)) return false;
 
     for (let i = 0; i < str.length; i++) {
       let scale = 1
       if (str[i] === str[i].toLowerCase()) scale = 0.75;
-      let letter = alphabet[str.toLowerCase().charCodeAt(i)] || alphabet[63] || []
+      let letter = alphabet[str.toLowerCase().charCodeAt(i)] || alphabet[63] || [];
       for (let line of letter) {
         let x1 = x + (line[1] * scale + kerning * i) * fontSize;
         let y1 = y + (line[0] * scale * fontSize);
         let x2 = x + (line[3] * scale + kerning * i) * fontSize;
         let y2 = y + (line[2] * scale * fontSize);
-        this.draw(x1, y1, x2, y2)
+        if(!this.draw(x1, y1, x2, y2)) return false;
         await sleep(Math.floor(timeout / letter.length))
       }
     }
     this.drawing = false;
-    await this.move(x, y)
+
+    if(sneaky) if(!await this.move(x, y)) return false;
+
+    return true;
   }
 }
 

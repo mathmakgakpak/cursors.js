@@ -27,7 +27,7 @@ reconnectTimeout (number) - timeout after bot should reconnect
 I think that I forgot about something `¯\_(ツ)_/¯`
 
 
-### async (that means you can wait for bot move) cjs.move(x, y)
+### async cjs.move(x = cjs.position.x, y = cjs.position.y, pathFinder = true, pathFinderTimeout = 5)
 this function allows you to move your bot using pathfinder  
 ```js
 cjs.move(cjs.position.x + 10); //moves 10 pixels to right
@@ -35,7 +35,7 @@ cjs.move(undefined, cjs.position.y + 10); //moves 10 pixels to down
 cjs.move(300,175); // moves to x:300, y:175
 ```
 
-### cjs.click(x, y)
+### cjs.click(x = cjs.position.x, y = cjs.position.y)
 this function allows you to click using bot  
 ```js
 cjs.click(cjs.position.x + 10); //moves 10 pixels to right and clicks 1 time
@@ -43,30 +43,28 @@ cjs.click(); //clicks 1 time at your position
 cjs.click(300,175); // clicks at x:300, y:175
 ```
 
-### cjs.draw(x1, y1,x2, y2)
+### cjs.draw(x1 = cjs.position.x, y1 = cjs.position.y, x2 = cjs.position.x, y2 = cjs.position.y)
 this function allows you to draw using bot  
 ```js
 cjs.draw(undefined,undefined, cjs.position.x + 10); //draw from your position to your position x + 10 pixels
 ```
 
-### async cjs.drawArray(array, x, y, scale, timeout) async
+### async cjs.drawArray(array, x = this.position.x, y = this.position.y, scale = 1, timeout = 70, sneaky = true) async
 this function allows you to draw images  
 ```js
 cjs.drawArray([[1,2,1,1],[2,2,1,2],[2,1,2,2],[1,1,2,1],[2,2,1,1],[1,2,2,1],[2,4,1,4],[2,5,2,4],[1,5,2,5],[1,4,1,5],[2,5,1,4],[1,5,2,4],[3,5,3,1],[4,5,3,5],[5,4,4,5],[5,3,5,4],[5,2,5,3],[4,1,5,2],[3,1,4,1]]) //draws smile on your position
-//default x and y is cjs.position
-//default scale is 1
-//default timeout is 70ms
+
+//sneaky means if it should back to start position (x, y args)
 ```
 
-### async cjs.drawWord(word, x, y, fontSize, kerning, timeout)
+### async cjs.drawWord(str, x = this.position.x, y = this.position.y, fontSize = 2, kerning = 3, timeout = 250, sneaky = true)
 this function allows you to draw words  
 some of leters are weird well sorry  
 ```js
 cjs.drawWord("Hello I'm using cursorsjs by mathias377") //< it will be written
-//default x and y is cjs.position
-//default fontSize is 2
-//default kerning (spaces between letters) is 3
-//default timeout is 250ms
+//kerning is spaces between letters
+//sneaky means if it should back to start position (x, y args)
+//timeout between drawing letters
 ```
 ### cjs.position
 It's bot position  
@@ -96,13 +94,13 @@ cjs.on("level", function(level) {
 ```
 
 ### cjs.players
-returns level players array, but if you will use memorySaver it will return undefined  
+returns level players object, but if you will use memorySaver it will return undefined  
 
 ### cjs.levelObjects
-returns level Objects array, but if you will use memorySaver it will return undefined
+returns level objects array, but if you will use memorySaver it will return undefined
 
 ### cjs.levelClicks
-returns level Clicks array, but if you will use memorySaver it will return undefined
+returns level clicks array, but if you will use memorySaver it will return undefined
 
 ### cjs.levelDrawings
 returns level drawings array, but if you will use memorySaver it will return undefined
